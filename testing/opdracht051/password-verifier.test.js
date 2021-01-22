@@ -4,7 +4,8 @@ const {
     isNotNull,
     hasUpperCase,
     hasLowerCase,
-    hasDigit
+    hasDigit,
+    minimumConditionsReached
 } = require("./password-verifier");
 
 // test lengte van password meer dan 8 cijfers is false:
@@ -76,7 +77,7 @@ test ("hasLowerCase, only digits" , () => {
     expect(hasLowerCase("12")).toBe(false);
 })
 
-//
+// test of de functie minstens 1 getal heeft
 
 test ("hasDigit" , () => {
     expect(hasDigit("a")).toBe(false);
@@ -94,19 +95,71 @@ test ("hasDigit, null" , () => {
     expect(hasDigit(null)).toBe(false);
 })
 
+// combine the conditions 
+// minimaal 3 van de condintions have to be true
+// conditie "has 1 or more lowercase" MOET true zijn
 
-
-
-
-
-
-
-
-
-
-
-// test of files goed werken en npm test werkt
-test("first", () => {
-    let result = verifyPassword("eerste_test");
-    expect(result).toBe("eerste_test")
+test ("minimumConditionsReached", () => {
+    const conditions = [false, false, false, false, false];
+    expect(minimumConditionsReached(conditions)).toBe(false);
 });
+
+test ("minimumConditionsReached under cutoff", () => {
+    const conditions = [true, true, false, false, false];
+    expect(minimumConditionsReached(conditions)).toBe(false);
+});
+
+test ("minimumConditionsReached on cutoff", () => {
+    const conditions = [true, true, true, false, false];
+    expect(minimumConditionsReached(conditions)).toBe(true);
+});
+
+test ("minimumConditionsReached over cutoff", () => {
+    const conditions = [true, true, true, true, false];
+    expect(minimumConditionsReached(conditions)).toBe(true);
+});
+
+// test for outer verify password
+
+test ("verifyPassword null", () => {
+    expect(verifyPassword(null)).toBe(false);
+})
+
+test ("verifyPassword 1", () => {
+    expect(verifyPassword("1")).toBe(false);
+})
+
+test ("verifyPassword only digits", () => {
+    expect(verifyPassword("1345")).toBe(false);
+})
+
+test ("verifyPassword only uppercase", () => {
+    expect(verifyPassword("KJRN")).toBe(false);
+})
+
+test ("verifyPassword only lowercase", () => {
+    expect(verifyPassword("nfjnewf")).toBe(true);
+})
+
+test ("verifyPassword only lowercase but too long", () => {
+    expect(verifyPassword("jnlpoihney")).toBe(false);
+})
+
+test ("verifyPassword, correct password", () => {
+    expect(verifyPassword("Ab1")).toBe(true);
+})
+
+
+
+
+
+
+
+
+
+
+// // test of files goed werken en npm test werkt
+// test("first", () => {
+//     let result = verifyPassword("eerste_test");
+//     expect(result).toBe("eerste_test")
+// });
